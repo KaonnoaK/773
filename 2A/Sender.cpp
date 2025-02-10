@@ -1,4 +1,4 @@
-#include <stdint.h>
+ #include <stdint.h>
 #include <openssl/aes.h>
 #include <fcntl.h>
 #include <sched.h>
@@ -52,13 +52,18 @@ void stringToBits(const char *str) {
 void send_data(int sockfd)
 {
 
-    char bits[5] = {'0','1','1','0'};
+    char bits[9] = {'0','1','1','0','0','1','1','0'};
+    
+    printf("\n Bits to be sent %s \n", bits);
     unsigned char buff[16];
     int n=0;
 
     for (;;) {
         while (bits[n]!='\0'){
-        	if (BitArray[n] == '1')
+        
+       //printf("\n Sending the bit %d \n",n);
+        
+        	if (bits[n] == '1')
         	{
         		write(sockfd,&signal, 1);
         	}
@@ -66,8 +71,8 @@ void send_data(int sockfd)
         		
         	}
         	n++;
-        	}
-    } n=0;
+        	}n=0;
+    } 
 }
 
 int main()
@@ -97,21 +102,6 @@ int main()
     }
     else
          printf("socket successfully binded..\n");
-         
-           FILE *fp = fopen(MSG_FILE, "r");
-    if(fp == NULL){
-        printf("Error opening file\n");
-        return 1;
-    }
-
-    char msg[MAX_MSG_SIZE];
-    int msg_size = 0;
-    char c;
-    while((c = fgetc(fp)) != EOF){
-        msg[msg_size++] = c;
-    }
-    fclose(fp);
-
 
     if ((listen(sockfd, 5)) != 0) {
         printf("Listen failed...\n");
@@ -130,6 +120,19 @@ int main()
      else
          printf("receiver acccepted ...\n");
     
+    /*FILE *fp = fopen(MSG_FILE, "r");
+    if(fp == NULL){
+        printf("Error opening file\n");
+        return 1;
+    }
+
+    char msg[MAX_MSG_SIZE];
+    int msg_size = 0;
+    char c;
+    while((c = fgetc(fp)) != EOF){
+        msg[msg_size++] = c;
+    }
+    fclose(fp);*/
 
     send_data(connfd);
     close(sockfd);

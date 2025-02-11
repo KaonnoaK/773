@@ -1,4 +1,4 @@
- #include <stdint.h>
+#include <stdint.h>
 #include <openssl/aes.h>
 #include <fcntl.h>
 #include <sched.h>
@@ -15,11 +15,14 @@
 #include <sys/types.h>
 #include <iostream>
 #include <bitset>
+#include "./cacheutils.h"
 
 #define MSG_FILE "msg.txt"
 #define MAX_MSG_SIZE 500
 char  BitArray[MAX_MSG_SIZE*8];
 char signal = 'a' ;
+
+size_t start, delta;
 
 
 void charToBits(char c, char *bits) {
@@ -57,22 +60,24 @@ void send_data(int sockfd)
     printf("\n Bits to be sent %s \n", bits);
     unsigned char buff[16];
     int n=0;
-
-    for (;;) {
-        while (bits[n]!='\0'){
-        
-       //printf("\n Sending the bit %d \n",n);
-        
-        	if (bits[n] == '1')
+    
+    char c;
+    
+    for (int i =0; i < 8; i++) {
+     c = bits[i];
+                start = rdtsc();
+                do {
+        	if (c == '1')
         	{
         		write(sockfd,&signal, 1);
+        		
         	}
         	else {
         		
         	}
-        	n++;
-        	}n=0;
-    } 
+        	
+        	} while ((delta = rdtsc() - start)<400);
+        }
 }
 
 int main()
@@ -133,7 +138,10 @@ int main()
         msg[msg_size++] = c;
     }
     fclose(fp);*/
-
+    	
     send_data(connfd);
+  
+   
+   printf ("\n cycles %lld \n", delta);
     close(sockfd);
 }

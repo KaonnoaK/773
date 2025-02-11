@@ -2,7 +2,7 @@
 
 bool detect_bit(struct config *config);
 
-int main(int argc, char **argv)
+ int main(int argc, char **argv)
 {
 	// Initialize config and local variables
 	struct config config;
@@ -12,12 +12,10 @@ int main(int argc, char **argv)
 	uint32_t bitSequence = 0;
 	uint32_t sequenceMask = ((uint32_t) 1<<6) - 1;
 	uint32_t expSequence = 0b101011;
-	int signal =1;
-	int ascii_msg_len;
 	
-	printf("Receiver ready \n");
-	
-	while (signal) {
+	printf("Listening...\n");
+	fflush(stdout);
+	while (1) {
 		bool bitReceived = detect_bit(&config);
 
 		// Detect the sequence '101011' that indicates sender is sending a message	
@@ -41,16 +39,19 @@ int main(int argc, char **argv)
 			msg_ch[binary_msg_len - 8] = '\0';
 
 			// Print out message
-			ascii_msg_len = binary_msg_len / 8;
+			int ascii_msg_len = binary_msg_len / 8;
 			char msg[ascii_msg_len];
-			printf("\n %s\n", conv_char(msg_ch, ascii_msg_len, msg));
-	
+			printf(" %s\n", conv_char(msg_ch, ascii_msg_len, msg));
 			
-		}
-		
-	}
-	printf("Receiver finished\n");
-	printf("Accuracy (%%): %f\n", check_accuracy(msg_ch, ascii_msg_len)*100);
+			printf("\n\n\n Accuracy (%%): %f\n", check_accuracy(msg_ch, ascii_msg_len)*100);
 	
+			// Terminate loop if received "exit" message
+			if (strcmp(msg, "exit") == 0) {
+				break;
+			}
+		}
+	}
+
+	printf("Receiver finished\n");
 	return 0;
 }

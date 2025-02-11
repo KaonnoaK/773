@@ -18,9 +18,16 @@ void send_bit(bool one, struct config *config)
 }
 
 int main(int argc, char **argv) {
+	// Initialize config and local variables
+	struct config config;
+	init_config(&config, argc, argv);
+	int sending = 1;
+
+    clock_t start_t, end_t;
+
+	bool sequence[8] = {1,0,1,0,1,0,1,1};
 	
-	
-    FILE *fp = fopen(MSG_FILE, "r");
+	FILE *fp = fopen(MSG_FILE, "r");
     if(fp == NULL){
         printf("Error opening file\n");
         return 1;
@@ -33,23 +40,15 @@ int main(int argc, char **argv) {
         text_buf[msg_size++] = c;
     }
     fclose(fp);
-	
-	clock_t start = clock();
-	struct config config;
-	init_config(&config, argc, argv);
-	int sending = 1;
 
-        clock_t start_t, end_t;
 
-	bool sequence[8] = {1,0,1,0,1,0,1,1};
-
-	printf("\n Starting \n");
 	while (sending) {
-        /*cc_sync();*/
-        /*clflush(config.addr);*/
-        /*continue;*/
 
-		
+
+		// Indicate termination if input message is "exit"
+		if (strcmp(text_buf, "exit\n") == 0) {
+			sending = 0;
+		}
 
 		// Convert that message to binary
 		char *msg = string_to_binary(text_buf);
@@ -62,19 +61,21 @@ int main(int argc, char **argv) {
 
 		// Send the message bit by bit
 		size_t msg_len = strlen(msg);
-     
+        start_t = clock();
+		for (int ind = 0; ind < msg_len; ind++) {
+			if (msg[ind] == '0') {
+				send_bit(false, &config);
+			} else {
+				send_bit(true, &config);
+			}
+		}
+        end_t = clock();
 
-
+        printf("Bitrate: %.2f Bytes/second\n", ((double) msg_len) / ((double) (end_t - start_t) / CLOCKS_PER_SEC));
         
         sending=0;
 	}
 
-	 clock_t end = clock();
-    double time_taken = ((double)end - start) / CLOCKS_PER_SEC;
-    printf("Message sent successfully\n");
-    printf("Time taken to send the message: %f\n", time_taken);
-    printf("Message size: %d\n", msg_size);
-    printf("Bits per second: %f\n", msg_size * 8 / time_taken);
 	printf("Sender finished\n");
 	return 0;
 }

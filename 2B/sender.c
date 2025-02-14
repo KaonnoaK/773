@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
 	int sending = 1;
 	
 	Node *head = NULL;
-	create_ll(&head);
+	create_ll(&head,MT);
 
     clock_t start_t, end_t;
 
@@ -47,12 +47,13 @@ int main(int argc, char **argv) {
     }
     fclose(fp);
 int cnt=0;
+char *msg = string_to_binary(text_buf);
 
 	while (sending) {
 
 	//printf("\n\n inside sending looop \n\n");
 		// Convert that message to binary
-		char *msg = string_to_binary(text_buf);
+		
 		//printf("\n %s \n",msg);
 		//printf("\n\n\n %s ",text_buf);
 

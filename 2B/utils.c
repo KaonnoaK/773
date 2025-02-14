@@ -1,4 +1,4 @@
- #include "utils.h"
+  #include "utils.h"
 
 // DO NOT MODIFY THIS FUNCTION
 double check_accuracy(char* received_msg, int received_msg_size){
@@ -32,7 +32,7 @@ double check_accuracy(char* received_msg, int received_msg_size){
 }
 
 
-CYCLES mem_access(ADDR_PTR addr)
+CYCLES mem_access(ADDR_PTR *addr)
 {
     CYCLES cycles;
 
@@ -130,39 +130,44 @@ uint64_t get_cache_set_index(ADDR_PTR phys_addr)
 }
 
 void fill_llc (uint64_t *base) {
-	for (size_t i = 0; i < CACHE_SIZE / 8 ; i+=8)
-		base[i] = 1;
+	uint64_t k=0, min=0,max=1048576;
+	for (size_t i = 0; i < N  ; i++  ) {
+		mem_access(base);base++;
+		}
+}
+void pointer_chase(Node *head) {
+    if (head == NULL)
+        return;
+
+    Node *temp = head;
+    while (temp != NULL) {
+        temp = temp->next;
+    }
 }
 
-void pointer_chase (Node *head) {
-	if (head==NULL) 
-		return;
-	Node *temp = head;
-	do {
-		temp = temp->next;
-	}while(temp!=head);
+
+void create_ll(Node **head, uint64_t iter) {
+    Node *curr, *temp;
+    uint64_t data = 0; // Initialize data to 0 or some value
+
+    // Allocate memory for the first node
+    *head = (Node*)malloc(sizeof(Node));
+    (*head)->data = data;  // Initialize the first node's data
+    (*head)->next = NULL;   // The first node's next is NULL because it's the start of the list
+
+    temp = *head;
+
+    // Create the rest of the nodes
+    for (size_t i = 2; i <= iter; i++) {
+        curr = (Node*)malloc(sizeof(Node));  // Allocate memory for the next node
+        curr->data = 1;                      // Set the data for the node (could be anything)
+        curr->next = NULL;                   // The next pointer of this node is NULL (last node)
+
+        temp->next = curr;  // Link the previous node to this new node
+        temp = curr;        // Move temp to the newly created node (for the next iteration)
+    }
 }
 
-void create_ll(Node **head) {
-	
-	Node *curr , *temp;
-	uint64_t data;
-	
-	*head = (Node*)malloc(sizeof (Node));
-	(*head)->data = data;
-	(*head)-> next = * head;
-	
-	temp = *head;
-	
-	for (int i = 2; i<= NUM_NODES; i++) {
-		curr = (Node*)malloc(sizeof(Node));
-		curr -> data = 1;
-		curr -> next = *head;
-		temp->next = curr;
-		temp = curr;
-	}
-	
-}
 
 /*void init_configS(struct config *config, int argc, char **argv)
 {
@@ -201,24 +206,30 @@ void init_configR(struct config *config, int argc, char **argv)
 }*/
 
 
-bool detect_bit(uint64_t *addr)
+bool detect_bit(Node *addr)
 {
+    size_t accesses = 0;
+    size_t total_accesses = 0;  // To count accesses for N times
 
-//printf("\n \n inside detect bit \n \n");
-		int hits = 0;
-		int misses = 0;
-		int accesses = 0;
+    CYCLES start_t = cc_sync();
+    while ((get_time() - start_t) < INTERVAL) {
+        for (size_t i = 0; i < 5; i++) {
+            pointer_chase(addr);
+            accesses++;
+        }
+        total_accesses += accesses;
+        accesses = 0;  // Reset for next N accesses
+    }
+    
+    printf("\n\n\t\t%ld\n", total_accesses);
 
-	CYCLES start_t = cc_sync();
-	while ((get_time() - start_t) < INTERVAL) {
-		fill_llc(addr);
-		accesses++;
-	}
-        printf("\n\n%d\n", accesses);
-		// Check if detected 1 or 0
-		if (accesses < MAX_ACCESSES) 
-			return true;
-		else 
-			return false;
+    // Check if detected 1 or 0
+    if (total_accesses >= MIN_ACCESSES) {
+        printf("\n \t 1 ");
+        return false;  // Bit is 1
+    } else {
+        printf("\n \t 0 ");
+        return true;  // Bit is 0
+    }
 }
 

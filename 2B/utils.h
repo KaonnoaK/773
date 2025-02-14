@@ -1,4 +1,4 @@
-#include <stdio.h>
+ #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -11,7 +11,7 @@
 #define MAX_MSG_SIZE 500
 
 #define CHANNEL_THRESHOLD 150
-#define MAX_ACCESSES 5
+#define MIN_ACCESSES 24
 
 #ifndef UTIL_H_
 #define UTIL_H_
@@ -23,20 +23,22 @@
 #define WAYS 16
 #define SETS 8192
 #define HALF_CACHE_SIZE (CACHE_SIZE/2)
-#define INTERVAL 0x00F00000
-#define NUM_NODES (HALF_CACHE_SIZE / CACHE_LINE_SIZE / 4)
+#define INTERVAL 0x0F000000
+#define MT (1042576/1.2)
+#define FILL 1048576
 #define NUM_SETS (NUM_NODES / 16)
+#define N 1048576
 
 
 #ifdef DUPLEX_MODE
-#define CHANNEL_SENDING_INTERVAL        0x00020000  // Increased interval for more cache filling time
-#define CHANNEL_SYNC_TIMEMASK           0x003FFFFF
+#define CHANNEL_SENDING_INTERVAL        0x00001000  // Increased interval for more cache filling time
+#define CHANNEL_SYNC_TIMEMASK           0x00000000
 #else
-#define CHANNEL_SENDING_INTERVAL        0x00010000  // Increased interval for more cache filling time
-#define CHANNEL_SYNC_TIMEMASK           0x001FFFFF  // Increased time mask for lenient synchronization
+#define CHANNEL_SENDING_INTERVAL        0x0F000000  // Increased interval for more cache filling time
+#define CHANNEL_SYNC_TIMEMASK           0x0FFFFFFF  // Increased time mask for lenient synchronization
 #endif
 
-#define CHANNEL_SYNC_JITTER             0x0000003F  // Increased jitter for better synchronization tolerance
+#define CHANNEL_SYNC_JITTER             0x0030 // Increased jitter for better synchronization tolerance
 
 #define MAX_BUFFER_LEN	1024
 
@@ -50,7 +52,7 @@ typedef struct Node {
 	uint64_t data;
 }Node;
 
-CYCLES mem_access(ADDR_PTR addr);
+CYCLES mem_access(ADDR_PTR *addr);
 CYCLES rdtscp(void);
 CYCLES get_time();
 CYCLES cc_sync();
@@ -71,7 +73,6 @@ void fill_llc (uint64_t *base);
 
 void pointer_chase(Node *head);
 
-void create_ll (Node**);
+void create_ll (Node**, uint64_t);
 
 #endif
-

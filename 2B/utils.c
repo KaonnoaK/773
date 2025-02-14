@@ -1,4 +1,4 @@
-#include "utils.h"
+ #include "utils.h"
 
 // DO NOT MODIFY THIS FUNCTION
 double check_accuracy(char* received_msg, int received_msg_size){
@@ -129,53 +129,42 @@ uint64_t get_cache_set_index(ADDR_PTR phys_addr)
     return (phys_addr & mask) >> 6;
 }
 
-void fill_llc (uint8_t *base) {
-
-printf("\n\n inside fill llc \n\n");
-	for (size_t set = 0; set < NUM_SETS; set++) {
-		for (size_t way=0 ; way < 16; way++) {
-			uint8_t *line_address = base + (set*16*CACHE_LINE_SIZE) + (way * CACHE_LINE_SIZE);
-			for (size_t i=0; i<CACHE_LINE_SIZE;i++) {
-				line_address[i] = (uint8_t)(i+way+set);
-				}
-			}
-		}
-printf ("\n\n exiting fill llc \n\n");
+void fill_llc (uint64_t *base) {
+	for (size_t i = 0; i < CACHE_SIZE / 8 ; i+=8)
+		base[i] = 1;
 }
 
 void pointer_chase (Node *head) {
-	Node *current = head;
-	
-	for (size_t i =0; i<NUM_NODES; i++) {
-		volatile uint8_t dummy = current->data[0];
-		(void)dummy;
-		current = current->next;
-	}
+	if (head==NULL) 
+		return;
+	Node *temp = head;
+	do {
+		temp = temp->next;
+	}while(temp!=head);
 }
 
-Node *create_ll() {
-	Node *head = NULL, *temp = NULL, *prev = NULL;
+void create_ll(Node **head) {
 	
-	for (size_t i=0; i<NUM_NODES; i++) {
-		temp = (Node*)malloc(sizeof(Node));
-		if(!temp) {
-			fprintf(stderr, "\n\n Memory allocation failed! \n");
-			return NULL;
-		}
-		temp->next = NULL;
-		if (prev) 
-			prev->next = temp;
-		else
-			head = temp;
-			
-		prev = temp;
+	Node *curr , *temp;
+	uint64_t data;
+	
+	*head = (Node*)malloc(sizeof (Node));
+	(*head)->data = data;
+	(*head)-> next = * head;
+	
+	temp = *head;
+	
+	for (int i = 2; i<= NUM_NODES; i++) {
+		curr = (Node*)malloc(sizeof(Node));
+		curr -> data = 1;
+		curr -> next = *head;
+		temp->next = curr;
+		temp = curr;
 	}
 	
-	return head;
 }
 
-
-void init_configS(struct config *config, int argc, char **argv)
+/*void init_configS(struct config *config, int argc, char **argv)
 {
 		//printf("\n\n inside the init_configure \n");
 		
@@ -209,25 +198,25 @@ void init_configR(struct config *config, int argc, char **argv)
 		
 		//printf("\n\n exiting the init_configure \n");
 
-}
+}*/
 
 
-bool detect_bit(struct config *config)
+bool detect_bit(uint64_t *addr)
 {
 
-printf("\n \n inside detect bit \n \n");
+//printf("\n \n inside detect bit \n \n");
 		int hits = 0;
 		int misses = 0;
 		int accesses = 0;
 
 	CYCLES start_t = cc_sync();
-	while ((get_time() - start_t) < config->interval) {
-		fill_llc(config->addr);
+	while ((get_time() - start_t) < INTERVAL) {
+		fill_llc(addr);
 		accesses++;
 	}
         printf("\n\n%d\n", accesses);
 		// Check if detected 1 or 0
-		if (accesses < (MAX_ACCESSES - 2) || accesses < (MAX_ACCESSES + 2)) 
+		if (accesses < MAX_ACCESSES) 
 			return true;
 		else 
 			return false;

@@ -1,33 +1,33 @@
-#include "utils.h"
+ #include "utils.h"
 
-void send_bit(bool one, struct config *config)
+void send_bit(bool one, Node* head)
 {
 	// Synchronize with receiver
 	
-	printf("\n\n inside send bit \n\n");
+	//printf("\n\n inside send bit \n\n");
 	CYCLES start_t = cc_sync();
 	if (one) {
-		// Repeatedly flush addr
-		uint8_t addr = config->addr;
-		while ((get_time() - start_t) < config->interval) {
-				pointer_chase(config->addr);
+
+		while ((get_time() - start_t) < INTERVAL) {
+				pointer_chase(head);
 		}	
 
 	} else {
 		
-		while (get_time() - start_t < config->interval) {}
+		while (get_time() - start_t < INTERVAL) {}
 	}
-	printf("\n exiting send bit \n\n");
+	//printf("\n exiting send bit \n\n");
 }
 
 int main(int argc, char **argv) {
 
 		
 	// Initialize config and local variables
-	struct config config;
-	init_configS(&config, argc, argv);
+	
 	int sending = 1;
 	
+	Node *head = NULL;
+	create_ll(&head);
 
     clock_t start_t, end_t;
 
@@ -46,28 +46,33 @@ int main(int argc, char **argv) {
         text_buf[msg_size++] = c;
     }
     fclose(fp);
-
+int cnt=0;
 
 	while (sending) {
 
 	//printf("\n\n inside sending looop \n\n");
 		// Convert that message to binary
 		char *msg = string_to_binary(text_buf);
+		//printf("\n %s \n",msg);
+		//printf("\n\n\n %s ",text_buf);
 
 		// Send a '10101011' bit sequence tell the receiver
 		// a message is going to be sent
 		for (int i = 0; i < 8; i++) {
-			send_bit(sequence[i], &config);
+			send_bit(sequence[i], head);
 		}
 
 		// Send the message bit by bit
 		size_t msg_len = strlen(msg);
         start_t = clock();
 		for (int ind = 0; ind < msg_len; ind++) {
+		printf("\n %c \n",msg[ind]);
+		cnt++;
+		printf("\n \t %d \n",cnt);
 			if (msg[ind] == '0') {
-				send_bit(false, &config);
+				send_bit(false, head);
 			} else {
-				send_bit(true, &config);
+				send_bit(true, head);
 			}
 		}
         end_t = clock();

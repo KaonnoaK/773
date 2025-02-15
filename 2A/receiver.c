@@ -67,7 +67,7 @@ int main( )
 		}
 	}
 
-	printf("Accuracy (%%): %f\n", check_accuracy(msg_ch, ascii_msg_len)*100);
+	 printf("\n\n\n Accuracy (%%): %f\n", check_accuracy(conv(msg_ch,ascii_msg_len,msg), ascii_msg_len)*100);
 	return 0;
 }
 

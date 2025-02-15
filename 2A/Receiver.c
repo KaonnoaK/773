@@ -6,10 +6,10 @@ int main(int argc, char **argv) {
     // Initialize config and local variables
     struct config config;
     init_config(&config, argc, argv);
-    char msg_ch[MAX_BUFFER_LEN + 1]; // Message buffer for storing bits
+    char msg_ch[MAX_BUFFER_LEN + 1];  // Message buffer for storing bits
 
     uint32_t bitSequence = 0;
-    uint32_t sequenceMask = ((uint32_t) 1 << 6) - 1; // Mask to check for 6 bits
+    uint32_t sequenceMask = ((uint32_t) 1 << 6) - 1;  // Mask to check for 6 bits
     uint32_t expSequence = 0b101011;  // Expected start sequence: 101011
 
     printf("Listening...\n");
@@ -46,8 +46,8 @@ int main(int argc, char **argv) {
                 }
             }
 
-            // Ensure the message is null-terminated
-            msg_ch[binary_msg_len - 8] = '\0';  // Adjust to the correct position
+            // Ensure proper null-termination after the last valid bit
+            msg_ch[binary_msg_len - 8] = '\0';
 
             // Convert binary to ASCII (assuming conversion function is implemented)
             int ascii_msg_len = binary_msg_len / 8;

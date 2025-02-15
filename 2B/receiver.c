@@ -21,7 +21,7 @@ bool detect_bit(Node *addr);
 		
 		bool bitReceived = detect_bit(head);
 
-		// Detect the sequence '101011' that indicates sender is sending a message	
+	
 		bitSequence = ((uint32_t) bitSequence<<1) | bitReceived;
 		
 		if ((bitSequence & sequenceMask) == expSequence) {
@@ -50,17 +50,17 @@ bool detect_bit(Node *addr);
 			}
 			msg_ch[binary_msg_len - 8] = '\0';
 
-			// Print out message
+		
 			int ascii_msg_len = binary_msg_len / 8;
 			char msg[ascii_msg_len];
 			//printf(" %s\n", conv_char(msg_ch, ascii_msg_len, msg));
 			
-			//printf("\n\n\n Accuracy (%%): %f\n", check_accuracy(msg_ch, ascii_msg_len)*100);
+			
 	
 			
 		}
 	}
-
-	printf("Receiver finished\n");
+ printf("\n\n\n Accuracy (%%): %f\n", check_accuracy(conv(msg_ch,ascii_msg_len,msg), ascii_msg_len)*100);
+	
 	return 0;
 }

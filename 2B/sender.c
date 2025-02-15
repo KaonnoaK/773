@@ -1,35 +1,30 @@
  #include "utils.h"
 
+
 void send_bit(bool one, Node* head)
 {
-	// Synchronize with receiver
-	
-	//printf("\n\n inside send bit \n\n");
+
 	CYCLES start_t = cc_sync();
 	if (one) {
 
+		ADDR_PTR addr = config->addr;
 		while ((get_time() - start_t) < INTERVAL) {
-				pointer_chase(head);
+			pointer_chase(head);
 		}	
 
 	} else {
-		
+	
 		while (get_time() - start_t < INTERVAL) {}
 	}
-	//printf("\n exiting send bit \n\n");
 }
 
-int main(int argc, char **argv) {
+int main() {
 
-		
-	// Initialize config and local variables
 	
 	int sending = 1;
-	
+
 	Node *head = NULL;
 	create_ll(&head,MT);
-
-    clock_t start_t, end_t;
 
 	bool sequence[8] = {1,0,1,0,1,0,1,1};
 	
@@ -46,43 +41,30 @@ int main(int argc, char **argv) {
         text_buf[msg_size++] = c;
     }
     fclose(fp);
-int cnt=0;
-char *msg = string_to_binary(text_buf);
+   clock_t start = clock();
+		char *msg = string_to_binary(text_buf);
 
-	while (sending) {
-
-	//printf("\n\n inside sending looop \n\n");
-		// Convert that message to binary
-		
-		//printf("\n %s \n",msg);
-		//printf("\n\n\n %s ",text_buf);
-
-		// Send a '10101011' bit sequence tell the receiver
-		// a message is going to be sent
 		for (int i = 0; i < 8; i++) {
 			send_bit(sequence[i], head);
 		}
 
-		// Send the message bit by bit
 		size_t msg_len = strlen(msg);
-        start_t = clock();
 		for (int ind = 0; ind < msg_len; ind++) {
-		printf("\n %c \n",msg[ind]);
-		cnt++;
-		printf("\n \t %d \n",cnt);
 			if (msg[ind] == '0') {
 				send_bit(false, head);
 			} else {
 				send_bit(true, head);
 			}
 		}
-        end_t = clock();
-
-        printf("Bitrate: %.2f Bytes/second\n", ((double) msg_len) / ((double) (end_t - start_t) / CLOCKS_PER_SEC));
-        
-        sending=0;
-	}
-
-	printf("Sender finished\n");
+		
+		
+		
+	clock_t end = clock();
+    double time_taken = ((double)end - start) / CLOCKS_PER_SEC;
+    printf("Message sent successfully\n");
+    printf("Time taken to send the message: %f\n", time_taken);
+    printf("Message size: %d\n", msg_size);
+    printf("Bits per second: %f\n", msg_size * 8 / time_taken);
 	return 0;
 }
+

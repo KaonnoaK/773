@@ -1,27 +1,15 @@
 #include "utils.h"
 
-// Cache miss latency threshold
-int CACHE_MISS_LATENCY = 100;
+int CACHE_MISS_LATENCY = 120;
 
-/*
- * Detects a bit by repeatedly measuring the access time of the load from config->addr
- * and counting the number of misses for the clock length of config->interval.
- *
- * Detect a bit 1 if misses >= hits
- * Detect a bit 0 otherwise
- */
 bool detect_bit(struct config *config)
 {
 	int misses = 0;
 	int hits = 0;
 
-	// Sync with sender
 	CYCLES start_t = cc_sync();
 	while ((get_time() - start_t) < config->interval) {
-		// Load data from config->addr and measure latency
 		CYCLES access_time = mem_access(config->addr); 
-
-		// Count if it's a miss or hit depending on latency
 		if (access_time > CACHE_MISS_LATENCY) {
 			misses++;
 		} else {
@@ -29,15 +17,14 @@ bool detect_bit(struct config *config)
 		}
 	}
 
-	//printf("\n %d \n",misses>=hits);
 	return misses > hits;
 }
 
-int main(int argc, char **argv)
+int main( )
 {
-	// Initialize config and local variables
+
 	struct config config;
-	init_config(&config, argc, argv);
+	init_config(&config);
 	char msg_ch[MAX_BUFFER_LEN + 1];
 
 	uint32_t bitSequence = 0;
@@ -48,7 +35,6 @@ int main(int argc, char **argv)
 	while (1) {
 		bool bitReceived = detect_bit(&config);
 
-		// Detect the sequence '101011' that indicates sender is sending a message	
 		bitSequence = ((uint32_t) bitSequence<<1) | bitReceived;
 		if ((bitSequence & sequenceMask) == expSequence) {
 			int binary_msg_len = 0;
@@ -73,16 +59,15 @@ int main(int argc, char **argv)
 					
 			msg_ch[binary_msg_len - 8] = '\0';
 
-			// Print out message
 			int ascii_msg_len = binary_msg_len / 8;
 			char msg[ascii_msg_len];
-			printf("\n%s\n", conv_char(msg_ch, ascii_msg_len, msg));
+			//printf("\n%s\n", conv_char(msg_ch, ascii_msg_len, msg));
 	
 			
 		}
 	}
 
-	printf("Receiver finished\n");
+	printf("Accuracy (%%): %f\n", check_accuracy(msg_ch, ascii_msg_len)*100);
 	return 0;
 }
 

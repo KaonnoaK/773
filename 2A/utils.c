@@ -125,7 +125,7 @@ uint64_t get_cache_set_index(ADDR_PTR phys_addr)
     return (phys_addr & mask) >> 6;
 }
 
-void init_config(struct config *config, int argc, char **argv)
+void init_config(struct config *config)
 {
 		int *data = (int*) malloc(64*64*64);
 
@@ -138,20 +138,6 @@ void init_config(struct config *config, int argc, char **argv)
 	
 		config->addr = (ADDR_PTR) addr;
 
-		/*
-	// Parse the command line flags
-	int option;
-	while ((option = getopt(argc, argv, "i:o:f:")) != -1) {
-		switch (option) {
-			case 'i':
-				echit(1);
-			default:
-				print_help();
-				exit(1);
-		}
-	}
-	
-	*/
 }
 
 

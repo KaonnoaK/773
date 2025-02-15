@@ -9,7 +9,7 @@
 #define MSG_FILE "msg.txt"
 #define MAX_MSG_SIZE 500
 
-#define CHANNEL_THRESHOLD 140
+#define CHANNEL_THRESHOLD 125
 
 #ifndef UTIL_H_
 #define UTIL_H_
@@ -53,4 +53,3 @@ char *conv_char(char *data, int size, char *msg);
 void init_config(struct config *config, int argc, char **argv);
 
 #endif
-

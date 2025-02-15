@@ -7,9 +7,9 @@ void send_bit(bool one, Node* head)
 	CYCLES start_t = cc_sync();
 	if (one) {
 
-		ADDR_PTR addr = config->addr;
+		ADDR_PTR addr = head;
 		while ((get_time() - start_t) < INTERVAL) {
-			pointer_chase(head);
+			pointer_chase(addr);
 		}	
 
 	} else {

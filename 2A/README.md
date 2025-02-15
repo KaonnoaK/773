@@ -2,10 +2,14 @@
 2. taskset -c 0 ./sender
 3. taskset -c 1 ./receiver
 
-alternative way to compile 
+An alternative way to compile :
+
 gcc utils.c sender.c -o sender
+
 gcc utils.c receiver.c -o receiver 
+
 taskset -c 0 ./sender
+
 taskset -c 1 ./receiver
 
 #Calibration

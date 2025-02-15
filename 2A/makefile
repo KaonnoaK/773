@@ -1,23 +1,29 @@
-CC = gcc 
-CLAGS = -Wall -g -lm
-OBJ = utils.o sender.o receiver.o
+ CC = gcc
+CFLAGS = -Wall
 
+# Targets
 all: sender receiver
 
+# Build sender executable
 sender: sender.o utils.o
-  $(CC) $(CFLAGS) sender.o utils.o -o sender
+	$(CC) $(CFLAGS) -o sender sender.o utils.o
 
+# Build receiver executable
 receiver: receiver.o utils.o
-  $(CC) $(CFLAGS) receiver.o utils.o -o receiver
+	$(CC) $(CFLAGS) -o receiver receiver.o utils.o
 
+# Compile utils.c to utils.o
 utils.o: utils.c utils.h
-  $(CC) $(CFLAGS) -c utils.c -o utils.o
+	$(CC) $(CFLAGS) -c utils.c -o utils.o
 
+# Compile sender.c to sender.o
 sender.o: sender.c utils.h
-  $(CC) $(CFLAGS) -c sender.c -o sender.o
+	$(CC) $(CFLAGS) -c sender.c -o sender.o
 
+# Compile receiver.c to receiver.o
 receiver.o: receiver.c utils.h
-  $(CC) $(CFLAGS) -c receiver.c -o receiver.o
+	$(CC) $(CFLAGS) -c receiver.c -o receiver.o
 
+# Clean up build artifacts
 clean:
-  rm -f *.o sender receiver
+	rm -f sender receiver *.o

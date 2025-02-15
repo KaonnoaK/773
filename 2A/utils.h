@@ -18,13 +18,10 @@
 #define CYCLES uint32_t
 #define ADDR_PTR uint64_t
 
-#ifdef DUPLEX_MODE
-#define CHANNEL_SENDING_INTERVAL        0x00009FFFF
-#define CHANNEL_SYNC_TIMEMASK           0x0000FFFFF
-#else
+
 #define CHANNEL_SENDING_INTERVAL        0x00009FFF
 #define CHANNEL_SYNC_TIMEMASK           0x0000FFFF
-#endif
+
 
 #define CHANNEL_SYNC_JITTER             0x0100
 
@@ -50,6 +47,6 @@ char *string_to_binary(char *s);
 
 char *conv_char(char *data, int size, char *msg);
 
-void init_config(struct config *config, int argc, char **argv);
+void init_config(struct config *config);
 
 #endif

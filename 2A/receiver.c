@@ -62,13 +62,14 @@ int main(int argc, char **argv)
 				} else {
 					msg_ch[i] = '0';
 					++strike_zeros;
+					if (strike_zeros >= 8 && i%8 ==0) {
+						break;
+					}
 					
 				}
 				
 			}
-			if (strike_zeros >= 8) {
-						break;
-					}
+			
 					
 			msg_ch[binary_msg_len - 8] = '\0';
 

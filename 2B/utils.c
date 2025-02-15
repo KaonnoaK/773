@@ -148,88 +148,23 @@ void pointer_chase(Node *head) {
 
 void create_ll(Node **head, uint64_t iter) {
     Node *curr, *temp;
-    uint64_t data = 0; // Initialize data to 0 or some value
-
-    // Allocate memory for the first node
+    uint64_t data = 0; 
+   
     *head = (Node*)malloc(sizeof(Node));
-    (*head)->data = data;  // Initialize the first node's data
-    (*head)->next = NULL;   // The first node's next is NULL because it's the start of the list
+    (*head)->data = data;  
+    (*head)->next = NULL;   
 
     temp = *head;
 
-    // Create the rest of the nodes
+   
     for (size_t i = 2; i <= iter; i++) {
-        curr = (Node*)malloc(sizeof(Node));  // Allocate memory for the next node
-        curr->data = 1;                      // Set the data for the node (could be anything)
-        curr->next = NULL;                   // The next pointer of this node is NULL (last node)
-
-        temp->next = curr;  // Link the previous node to this new node
-        temp = curr;        // Move temp to the newly created node (for the next iteration)
+        curr = (Node*)malloc(sizeof(Node)); 
+        curr->data = 1;                      
+        curr->next = NULL;                  
+        temp->next = curr;  
+        temp = curr;      
     }
 }
 
 
-/*void init_configS(struct config *config, int argc, char **argv)
-{
-		//printf("\n\n inside the init_configure \n");
-		
-			Node *head = create_ll();
-			if(!head)
-				return ;
-
-		config->interval = CHANNEL_SENDING_INTERVAL;
-	
-		config->addr = head;
-		
-		//printf("\n\n exiting the init_configure \n");
-
-}
-
-void init_configR(struct config *config, int argc, char **argv)
-{
-		//printf("\n\n inside the init_configure \n");
-		
-		
-		uint8_t *cache_mem = (uint8_t *)malloc(CACHE_SIZE);
-		
-		if(!cache_mem)
-			printf("\n\n malloc ka error \n");
-		//ADDR_PTR *addr = cache_mem;
-		
-
-		config->interval = CHANNEL_SENDING_INTERVAL;
-	
-		config->addr = cache_mem;
-		
-		//printf("\n\n exiting the init_configure \n");
-
-}*/
-
-
-bool detect_bit(Node *addr)
-{
-    size_t accesses = 0;
-    size_t total_accesses = 0;  // To count accesses for N times
-
-    CYCLES start_t = cc_sync();
-    while ((get_time() - start_t) < INTERVAL) {
-        for (size_t i = 0; i < 5; i++) {
-            pointer_chase(addr);
-            accesses++;
-        }
-        total_accesses += accesses;
-        accesses = 0;  // Reset for next N accesses
-    }
-    
-    printf("\n\n\t\t%ld\n", total_accesses);
-
-    // Check if detected 1 or 0
-    if (total_accesses >= MIN_ACCESSES) {
-        printf("\n \t 1 ");
-        return false;  // Bit is 1
-    } else {
-        printf("\n \t 0 ");
-        return true;  // Bit is 0
-    }
-}
 

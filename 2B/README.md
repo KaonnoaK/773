@@ -9,7 +9,7 @@ taskset -c 1 ./receiver
 
 #Calibration
 
-we tried to run fill the cache to various capacities in a seemingly isolated environment to measure the number of accesses in a given time.
+we tried to fill the cache to various capacities in a seemingly isolated environment to measure the number of accesses in a given time.
 
 # CS773 Assignment 2B
 

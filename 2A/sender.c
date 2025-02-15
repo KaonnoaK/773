@@ -18,10 +18,10 @@ void send_bit(bool one, struct config *config)
 	}
 }
 
-int main(int argc, char **argv) {
+int main() {
 
 	struct config config;
-	init_config(&config, argc, argv);
+	init_config(&config);
 	int sending = 1;
 
 	bool sequence[8] = {1,0,1,0,1,0,1,1};

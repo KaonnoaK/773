@@ -30,15 +30,11 @@
 #define N 1048576
 
 
-#ifdef DUPLEX_MODE
-#define CHANNEL_SENDING_INTERVAL        0x00001000  // Increased interval for more cache filling time
-#define CHANNEL_SYNC_TIMEMASK           0x00000000
-#else
-#define CHANNEL_SENDING_INTERVAL        0x0F000000  // Increased interval for more cache filling time
-#define CHANNEL_SYNC_TIMEMASK           0x0FFFFFFF  // Increased time mask for lenient synchronization
-#endif
+#define CHANNEL_SENDING_INTERVAL        
+#define CHANNEL_SYNC_TIMEMASK          
 
-#define CHANNEL_SYNC_JITTER             0x0030 // Increased jitter for better synchronization tolerance
+
+#define CHANNEL_SYNC_JITTER            
 
 #define MAX_BUFFER_LEN	1024
 
@@ -64,10 +60,6 @@ void clflush(ADDR_PTR addr);
 char *string_to_binary(char *s);
 
 char *conv_char(char *data, int size, char *msg);
-
-void init_configS(struct config *config, int argc, char **argv);
-
-void init_configR(struct config *config, int argc, char **argv);
 
 void fill_llc (uint64_t *base);
 

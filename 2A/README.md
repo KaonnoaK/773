@@ -22,7 +22,9 @@ we used the code calibration code that was given in task 1.
 
 ## Team Members
 Bhavani Onkar | 24M1094
+
 Mohith sai babu kota | 23M1169
+
 Satvikkumar Patel | 23M1117
 
 ## Task 2A
